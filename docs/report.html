@@ -1,0 +1,74 @@
+<title>NativeScript Skills Evaluation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#F6F7FA;--panel:#FFFFFF;--ink:#1A2130;--muted:#66718A;--line:#DCE1EA;--accent:#3D5AFE;--accent-ink:#2A3EB1;--ok:#2B9464;--warn:#C98A1E;--bad:#C94C4C;--base:#98A3B8;--chip:#EEF2F9;--code:#F0F3F8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0E1320;--panel:#151C2C;--ink:#E7EBF3;--muted:#98A3B8;--line:#26304A;--accent:#7C93FF;--accent-ink:#A7B6FF;--ok:#4FBF8C;--warn:#E0A63C;--bad:#E4706F;--base:#5C6784;--chip:#1C2538;--code:#111827}}
+:root[data-theme="dark"]{--bg:#0E1320;--panel:#151C2C;--ink:#E7EBF3;--muted:#98A3B8;--line:#26304A;--accent:#7C93FF;--accent-ink:#A7B6FF;--ok:#4FBF8C;--warn:#E0A63C;--bad:#E4706F;--base:#5C6784;--chip:#1C2538;--code:#111827}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Source Sans 3",system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:40px 24px 80px}
+h1,h2,h3{font-family:"Bricolage Grotesque","Source Sans 3",sans-serif;text-wrap:balance;letter-spacing:-.01em;margin:0}
+h1{font-size:clamp(30px,4.5vw,44px);font-weight:700;line-height:1.1}
+h2{font-size:24px;font-weight:700;margin:56px 0 12px}
+h3{font-size:18px;font-weight:600;margin:28px 0 8px}
+p,li{max-width:70ch}
+a{color:var(--accent-ink)}
+.eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:18px;color:var(--muted);max-width:68ch;margin-top:12px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:28px 0 8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.stat .v{font-family:"Bricolage Grotesque",sans-serif;font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat .l{font-size:13px;color:var(--muted);margin-top:4px}
+.stat.ok .v{color:var(--ok)}.stat.accent .v{color:var(--accent-ink)}
+.tablewrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+tr.cat td{background:var(--chip);font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted);padding:6px 12px}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px}
+.sub{font-family:"Source Sans 3",sans-serif;font-size:12px;color:var(--muted)}
+.muted{color:var(--muted)}
+.pos{color:var(--ok);font-weight:600}.neg{color:var(--bad);font-weight:600}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;background:var(--base);vertical-align:1px}
+.dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.bad{background:var(--bad)}
+.bar{display:inline-grid;grid-template-columns:120px auto;align-items:center;gap:8px;font-variant-numeric:tabular-nums}
+.bar i{display:block;height:8px;border-radius:4px;background:var(--chip);position:relative;overflow:hidden}
+.bar i::after{content:"";position:absolute;inset:0;width:calc(var(--v)*100%);background:var(--accent);border-radius:4px}
+.bar.ok i::after{background:var(--ok)}.bar.warn i::after{background:var(--warn)}.bar.bad i::after{background:var(--bad)}.bar.base i::after{background:var(--base)}
+.bar b{font-weight:600;font-size:13px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.card h3{margin-top:0}
+.card ul{padding-left:18px;margin:8px 0 0}
+code,pre{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:13px}
+code{background:var(--code);padding:1px 5px;border-radius:4px}
+.note{border-left:3px solid var(--accent);padding:6px 14px;color:var(--muted);margin:16px 0}
+.kicker{display:inline-block;background:var(--chip);color:var(--accent-ink);border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;margin-left:8px;vertical-align:middle}
+footer{margin-top:64px;color:var(--muted);font-size:13px}
+@media (prefers-reduced-motion:no-preference){.bar i::after{transition:width .4s ease}}
+</style>
+<main>
+<div class="eyebrow">@nativescript/skills · v0.0.0 · 2026-08-21</div>
+<h1>NativeScript Skills — evaluation</h1>
+<p class="lede">Static spec lint over every <code>SKILL.md</code>, and a behavioural <a href="https://github.com/mgechev/skillgrade">skillgrade</a> run: one realistic developer prompt per skill, all skills installed at once so discovery is part of the test.</p>
+
+<div class="stats">
+  <div class="stat ok"><div class="v">0/0</div><div class="l">pass Agent Skills spec lint</div></div>
+  <div class="stat accent"><div class="v">—</div><div class="l">mean reward with skills</div></div>
+  <div class="stat accent"><div class="v">—</div><div class="l">trials where the agent found the right skill unprompted</div></div>
+  <div class="stat "><div class="v">—</div><div class="l">outcome uplift vs. no skills</div></div>
+</div>
+
+<h2>Behavioural results <span class="kicker">skillgrade</span></h2>
+<p>Reward = 0.25 × <em>skill loaded</em> (seen in the tool transcript) + 0.75 × weighted outcome checks. Baseline runs the identical prompt with no skills installed; Δ compares outcome checks only.</p>
+<p class="note">No skillgrade results under <code>evals/results/</code> yet and <code>evals/tasks.mjs</code> has no tasks. Run <code>npm run eval:smoke</code> (and optionally <code>npm run eval:baseline</code>), then <code>npm run eval:report</code>.</p>
+
+<h2>Static review <span class="kicker">evals/lint-skills.mjs</span></h2>
+<p class="note">No skills under <code>skills/</code> yet.</p>
+
+
+<footer>Generated by <code>evals/report-html.mjs</code> from <code>evals/results/</code> and <code>evals/lint-skills.mjs</code>.</footer>
+</main>

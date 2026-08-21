@@ -1,0 +1,23 @@
+{
+  "name": "nativescript-skills",
+  "description": "Official NativeScript Agent Skills: core runtime and custom views, iOS and Android native APIs from TypeScript, Angular/Vue/React/Svelte/Solid flavors, UI patterns, device APIs, testing, tooling and plugin authoring.",
+  "author": {
+    "name": "NativeScript",
+    "url": "https://github.com/NativeScript"
+  },
+  "homepage": "https://github.com/NativeScript/skills",
+  "repository": "https://github.com/NativeScript/skills",
+  "license": "Apache-2.0",
+  "keywords": [
+    "nativescript",
+    "ios",
+    "android",
+    "angular",
+    "vue",
+    "react",
+    "svelte",
+    "solid",
+    "mobile"
+  ],
+  "skills": []
+}

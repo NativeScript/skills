@@ -1,0 +1,68 @@
+{
+  "name": "@nativescript/skills",
+  "version": "0.0.0",
+  "description": "Agent Skills for NativeScript, organised by area (core, iOS, Android, frontend flavors, UI, device, testing, tooling, plugins). Works with Claude Code, Cursor, Codex, Copilot, Gemini CLI and any Agent Skills client; ships as skills/<category>/<name>/SKILL.md.",
+  "license": "Apache-2.0",
+  "author": "NativeScript <oss@nativescript.org>",
+  "homepage": "https://github.com/NativeScript/skills#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NativeScript/skills.git"
+  },
+  "bugs": {
+    "url": "https://github.com/NativeScript/skills/issues"
+  },
+  "keywords": [
+    "nativescript",
+    "agent-skills",
+    "skills",
+    "tanstack-intent",
+    "claude-code",
+    "cursor",
+    "codex",
+    "copilot",
+    "ios",
+    "android",
+    "angular",
+    "vue",
+    "react",
+    "svelte",
+    "solid"
+  ],
+  "type": "module",
+  "bin": {
+    "nativescript-skills": "bin/cli.mjs"
+  },
+  "files": [
+    "skills",
+    "!skills/**/.DS_Store",
+    "!skills/_*",
+    "lib",
+    "bin",
+    "skills.sh.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "new": "node scripts/new-skill.mjs",
+    "sync": "node scripts/sync.mjs",
+    "sync:check": "node scripts/sync.mjs --check",
+    "lint": "node evals/lint-skills.mjs",
+    "validate": "npx -y @tanstack/intent@latest validate",
+    "check": "npm run lint && npm run sync:check && npm run validate && npm pack --dry-run",
+    "eval": "evals/run.sh",
+    "eval:smoke": "evals/run.sh --trials=1 --parallel=4 --grader=deterministic",
+    "eval:baseline": "evals/run.sh --baseline --trials=3 --parallel=3 --grader=deterministic",
+    "eval:regrade": "node evals/regrade.mjs",
+    "eval:report": "node evals/report.mjs --out docs/EVALUATION.md && node evals/report-html.mjs",
+    "eval:preview": "skillgrade preview browser --output=evals/results",
+    "prepack": "npm run lint && npm run sync:check"
+  }
+}

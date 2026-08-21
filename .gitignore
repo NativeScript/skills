@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+*.tgz
+evals/results/*
+!evals/results/.gitignore
+evals/suite/skills/
+evals/baseline/empty/

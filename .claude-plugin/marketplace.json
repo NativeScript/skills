@@ -1,0 +1,33 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "nativescript",
+  "owner": {
+    "name": "NativeScript",
+    "url": "https://github.com/NativeScript"
+  },
+  "metadata": {
+    "description": "Official NativeScript Agent Skills for AI coding agents."
+  },
+  "plugins": [
+    {
+      "name": "nativescript-skills",
+      "description": "Official NativeScript Agent Skills: core runtime and custom views, iOS and Android native APIs from TypeScript, Angular/Vue/React/Svelte/Solid flavors, UI patterns, device APIs, testing, tooling and plugin authoring.",
+      "source": "./",
+      "strict": false,
+      "category": "development",
+      "tags": [
+        "nativescript",
+        "ios",
+        "android",
+        "angular",
+        "vue",
+        "react",
+        "svelte",
+        "solid",
+        "mobile"
+      ],
+      "homepage": "https://github.com/NativeScript/skills",
+      "skills": []
+    }
+  ]
+}

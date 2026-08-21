@@ -1,0 +1,30 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Spec + tree lint (names, depth, descriptions, cross-refs, one task per skill)
+        run: node evals/lint-skills.mjs
+      - name: Generated manifests match the tree
+        run: node scripts/sync.mjs --check
+      - name: Eval suite renders
+        run: node evals/build.mjs
+      - name: TanStack Intent validate
+        run: npx -y @tanstack/intent@latest validate
+      - name: Pack dry-run
+        run: npm pack --dry-run
+      - name: skills.sh discovery sees every skill
+        run: |
+          want=$(node -e "import('./lib/skills.mjs').then(m => console.log(m.discoverSkills().length))")
+          if [ "$want" -eq 0 ]; then echo "no skills yet — skipping discovery check"; exit 0; fi
+          out=$(CI=1 npx -y skills@latest add "$PWD" --list 2>&1 | sed -E 's/\x1b\[[0-9;?]*[A-Za-z]//g')
+          n=$(printf '%s\n' "$out" | grep -oE 'Found [0-9]+ skills?' | grep -oE '[0-9]+' | head -1)
+          echo "skills CLI found ${n:-0} skills, repo has $want"
+          [ "${n:-0}" -eq "$want" ] || { printf '%s\n' "$out" | tail -40; exit 1; }
