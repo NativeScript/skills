@@ -1,6 +1,6 @@
 {
   "name": "@nativescript/skills",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Agent Skills for NativeScript, organised by area (core, iOS, Android, frontend flavors, UI, device, testing, tooling, plugins). Works with Claude Code, Cursor, Codex, Copilot, Gemini CLI and any Agent Skills client; ships as skills/<category>/<name>/SKILL.md.",
   "license": "Apache-2.0",
   "author": "NativeScript <oss@nativescript.org>",
@@ -67,6 +67,6 @@
     "prepack": "npm run lint && npm run sync:check"
   },
   "devDependencies": {
-    "@tanstack/intent": "^0.4.0"
+    "@tanstack/intent": "^0.3.7"
   }
 }
