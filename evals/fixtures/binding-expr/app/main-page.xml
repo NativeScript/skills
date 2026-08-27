@@ -1,0 +1,10 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
+  <StackLayout class="p-4">
+    <!-- crashes with "Invalid expression syntax" -->
+    <Label text="{{ items.filter(i => i.done).length + ' done' }}" />
+    <!-- editing this field corrupts BOTH firstName and firstNameSuffix in the model -->
+    <TextField text="{{ firstName + ' ' + firstNameSuffix }}" />
+    <Label text="{{ firstName }}" />
+    <Label text="{{ firstNameSuffix }}" />
+  </StackLayout>
+</Page>

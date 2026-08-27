@@ -1,0 +1,18 @@
+.ns-root {
+  --brand: #2563eb;
+  --pad: 16;
+}
+
+/* When --accent isn't defined (it's set only on some screens), these labels
+   lose their colour entirely instead of falling back to the brand blue. */
+.cta {
+  color: var(--accent);
+  padding: var(--pad);
+}
+
+/* Intended: full width minus a 32dp gutter. ACTUAL: the width never applies —
+   the whole declaration is ignored. */
+.banner {
+  width: calc(100% - 32px);
+  background-color: var(--brand);
+}

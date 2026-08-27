@@ -1,0 +1,9 @@
+import { EventData, Observable, Page } from '@nativescript/core'
+
+export function navigatingTo(args: EventData) {
+  const page = <Page>args.object
+  const vm = new Observable()
+  vm.set('onOpenHero', () => console.log('open hero'))
+  vm.set('onOpenItem', () => console.log('open item'))
+  page.bindingContext = vm
+}

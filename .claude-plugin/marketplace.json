@@ -27,7 +27,14 @@
         "mobile"
       ],
       "homepage": "https://github.com/NativeScript/skills",
-      "skills": []
+      "skills": [
+        "./skills/android/",
+        "./skills/core/",
+        "./skills/ios/",
+        "./skills/testing/",
+        "./skills/tooling/",
+        "./skills/ui/"
+      ]
     }
   ]
 }

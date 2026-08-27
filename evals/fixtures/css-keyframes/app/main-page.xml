@@ -1,0 +1,9 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" actionBarHidden="true">
+  <StackLayout class="p-4">
+    <Label text="Today" class="h1" />
+    <StackLayout class="card-enter p-4" backgroundColor="#f8fafc" borderRadius="12">
+      <Label text="Tonight's Brief" class="h2" />
+      <Label text="Three items need review" textWrap="true" />
+    </StackLayout>
+  </StackLayout>
+</Page>

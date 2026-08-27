@@ -1,0 +1,9 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" actionBarHidden="true">
+  <ScrollView>
+    <StackLayout class="p-4">
+      <Label class="text-2xl" textWrap="true" text="Weekly planning notes and the long road to a stable release" />
+      <Label class="text-base" textWrap="true" text="This description wraps across several lines on a phone. It summarises what changed this week, what is blocked, and what the team plans to pick up next sprint." />
+      <Label class="text-sm" textWrap="true" text="Last updated two hours ago by the release bot after the nightly pipeline finished." />
+    </StackLayout>
+  </ScrollView>
+</Page>

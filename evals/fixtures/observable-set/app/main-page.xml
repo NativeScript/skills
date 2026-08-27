@@ -1,0 +1,8 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
+  <StackLayout class="p-4">
+    <Label text="{{ displayName }}" class="h1" />
+    <Label text="{{ tags }}" textWrap="true" />
+    <Button text="Add tag" tap="{{ addTag }}" class="-primary" />
+    <Label id="celebrate" text="🎉 Celebrate" class="h2" />
+  </StackLayout>
+</Page>

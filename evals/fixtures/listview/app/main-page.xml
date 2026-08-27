@@ -1,0 +1,19 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" actionBarHidden="true">
+  <GridLayout rows="auto, *">
+    <Label row="0" text="Feed" class="h1 p-4" />
+    <ListView row="1" id="list">
+      <ListView.itemTemplates>
+        <template key="featured">
+          <GridLayout class="p-4" backgroundColor="#eef2ff">
+            <Label text="{{ title }}" class="h2" />
+          </GridLayout>
+        </template>
+        <template key="row">
+          <GridLayout class="p-4">
+            <Label text="{{ title }}" />
+          </GridLayout>
+        </template>
+      </ListView.itemTemplates>
+    </ListView>
+  </GridLayout>
+</Page>

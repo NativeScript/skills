@@ -1,0 +1,21 @@
+.h1 { font-size: 24; font-weight: bold; }
+.h2 { font-size: 18; font-weight: bold; }
+.p-4 { padding: 16; }
+
+/* Card entrance: supposed to slide up + fade in, stay put when done,
+   and gently highlight by tinting the title color.
+   ACTUAL: nothing tints, the card snaps back to its start position at the
+   end, and animation-direction appears ignored. Pausing via
+   animation-play-state does nothing either. */
+@keyframes card-in {
+  0% { transform: translate(0, 40); opacity: 0; color: #2563eb; }
+  100% { transform: translate(0, 0); opacity: 1; color: #111827; }
+}
+
+.card-enter {
+  animation-name: card-in;
+  animation-duration: 0.4s;
+  animation-timing-function: ease-out;
+  animation-direction: alternate;
+  animation-play-state: running;
+}

@@ -1,0 +1,13 @@
+<GridLayout xmlns="http://schemas.nativescript.org/tns.xsd" rows="auto, *, auto" class="p-4" loaded="onModalLoaded">
+  <StackLayout row="0">
+    <Label text="⚙️ Settings" class="h1" />
+    <Label text="Tune how the app behaves" textWrap="true" />
+  </StackLayout>
+  <StackLayout row="1">
+    <Label text="Notifications" class="h2" />
+    <Label text="🔔 Daily digest at 8am" />
+    <Label text="Appearance" class="h2" />
+    <Label text="🌙 Follow system theme" />
+  </StackLayout>
+  <Button row="2" text="Done" tap="onDone" class="-primary" />
+</GridLayout>

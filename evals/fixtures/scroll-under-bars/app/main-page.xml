@@ -1,0 +1,20 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" actionBarHidden="true">
+  <GridLayout rows="auto, *">
+    <Label row="0" text="Today" class="h1 p-4" />
+    <ScrollView row="1" iosOverflowSafeArea="false">
+      <StackLayout>
+        <Label text="Feed item 1" class="p-4" textWrap="true" />
+        <Label text="Feed item 2" class="p-4" textWrap="true" />
+        <Label text="Feed item 3" class="p-4" textWrap="true" />
+        <Label text="Feed item 4" class="p-4" textWrap="true" />
+        <Label text="Feed item 5" class="p-4" textWrap="true" />
+        <Label text="Feed item 6" class="p-4" textWrap="true" />
+        <Label text="Feed item 7" class="p-4" textWrap="true" />
+        <Label text="Feed item 8" class="p-4" textWrap="true" />
+        <Label text="Feed item 9" class="p-4" textWrap="true" />
+        <Label text="Feed item 10" class="p-4" textWrap="true" />
+        <Label text="Last item" class="p-4" textWrap="true" />
+      </StackLayout>
+    </ScrollView>
+  </GridLayout>
+</Page>

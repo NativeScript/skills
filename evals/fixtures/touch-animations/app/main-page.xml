@@ -1,0 +1,23 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" actionBarHidden="true">
+  <GridLayout rows="auto, auto, *">
+    <Label row="0" text="Today" class="h1 p-4" />
+
+    <!-- hero card: should feel strongly pressable -->
+    <GridLayout row="1" id="hero" class="m-4 p-4" backgroundColor="#2563EB" borderRadius="16" tap="{{ onOpenHero }}">
+      <Label text="Tonight's Brief" color="#ffffff" class="h2" />
+    </GridLayout>
+
+    <!-- plain list rows: taps should NOT animate (each row opens instantly) -->
+    <StackLayout row="2">
+      <GridLayout class="p-4 list-row" tap="{{ onOpenItem }}">
+        <Label text="Standup notes" />
+      </GridLayout>
+      <GridLayout class="p-4 list-row" tap="{{ onOpenItem }}">
+        <Label text="Design review" />
+      </GridLayout>
+      <GridLayout class="p-4 list-row" tap="{{ onOpenItem }}">
+        <Label text="Release retro" />
+      </GridLayout>
+    </StackLayout>
+  </GridLayout>
+</Page>

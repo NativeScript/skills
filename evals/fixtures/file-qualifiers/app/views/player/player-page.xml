@@ -1,0 +1,6 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" actionBarHidden="true">
+  <GridLayout rows="auto, *">
+    <Label row="0" text="Now Playing (phone layout)" class="h1 p-4" />
+    <Label row="1" text="artwork + controls stacked vertically" class="p-4" />
+  </GridLayout>
+</Page>

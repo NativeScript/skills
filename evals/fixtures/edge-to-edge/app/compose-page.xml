@@ -1,0 +1,14 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" actionBarHidden="true">
+  <GridLayout rows="*, auto" loaded="onRootLoaded" class="app-background">
+    <ScrollView row="0">
+      <StackLayout>
+        <Label text="Draft" class="h1 p-4" />
+        <TextView hint="Write something" class="p-4" minHeight="120" />
+      </StackLayout>
+    </ScrollView>
+    <GridLayout row="1" columns="*, auto" class="p-4" backgroundColor="#161C26">
+      <Label col="0" text="Attach" color="#ffffff" />
+      <Button col="1" text="Send" class="-primary" />
+    </GridLayout>
+  </GridLayout>
+</Page>

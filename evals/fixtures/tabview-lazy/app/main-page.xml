@@ -1,0 +1,19 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" actionBarHidden="true">
+  <TabView androidTabsPosition="bottom">
+    <TabViewItem title="Today">
+      <GridLayout loaded="onTodayLoaded" rows="*">
+        <Label text="Today feed" class="p-4" />
+      </GridLayout>
+    </TabViewItem>
+    <TabViewItem title="Library">
+      <GridLayout loaded="onLibraryLoaded" rows="*">
+        <Label text="Library" class="p-4" />
+      </GridLayout>
+    </TabViewItem>
+    <TabViewItem title="Profile">
+      <GridLayout loaded="onProfileLoaded" rows="*">
+        <Label text="Profile" class="p-4" />
+      </GridLayout>
+    </TabViewItem>
+  </TabView>
+</Page>

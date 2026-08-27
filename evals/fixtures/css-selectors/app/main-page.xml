@@ -1,0 +1,11 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
+  <ActionBar title="Feed">
+    <NavigationButton text="Back" class="nav-back" />
+    <ActionItem text="Share" ios.position="right" class="bar-item" />
+  </ActionBar>
+  <StackLayout class="p-4">
+    <Button text="Continue" kind="primary" />
+    <Label id="rose" text="Rose" />
+    <Label id="tulip" text="Tulip" />
+  </StackLayout>
+</Page>

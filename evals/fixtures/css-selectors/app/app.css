@@ -1,0 +1,24 @@
+.h1 { font-size: 24; font-weight: bold; }
+.p-4 { padding: 16; }
+
+/* Highlight any button whose kind attribute contains "primary".
+   ACTUAL: never applies. */
+[kind*='primary'] {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+/* Rows tagged exactly "flower" in their tags attribute should tint.
+   tags is set like tags="my-flower" from code. ACTUAL: never applies. */
+label[tags~='flower'] {
+  color: #16a34a;
+}
+
+/* Style the ActionBar back button and items.
+   ACTUAL: silently matches nothing. */
+NavigationButton {
+  color: #2563eb;
+}
+ActionItem {
+  color: #2563eb;
+}

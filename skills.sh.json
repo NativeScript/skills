@@ -1,5 +1,79 @@
 {
   "$schema": "https://skills.sh/schema/skills.sh.json",
   "notGrouped": "bottom",
-  "groupings": []
+  "groupings": [
+    {
+      "title": "Android native from TypeScript",
+      "description": "`android.view`, Canvas, drawables, Choreographer and the Java/Kotlin interop rules the NativeScript Android runtime enforces: `@NativeClass` placement, typed-array marshalling, `Array.create`, overload resolution, colour encoding.",
+      "skills": [
+        "ns-android-edge-to-edge",
+        "ns-android-window-insets"
+      ]
+    },
+    {
+      "title": "Core runtime & views",
+      "description": "`@nativescript/core` fundamentals that apply to every flavor: custom views and the common/ios/android file split, `Property` and CSS plumbing, layouts, lifecycle, and JavaScript-runtime quirks (no `Intl` on iOS, marshalling rules that cut across platforms).",
+      "skills": [
+        "ns-binding-expressions",
+        "ns-color-formats",
+        "ns-http-gotchas",
+        "ns-multi-window",
+        "ns-navigation-transitions",
+        "ns-observable-array-change-events",
+        "ns-observable-set-semantics",
+        "ns-page-navigation-lifecycle",
+        "ns-web-globals",
+        "ns-xml-custom-components"
+      ]
+    },
+    {
+      "title": "iOS native from TypeScript",
+      "description": "Driving UIKit, SceneKit, CoreLocation, Metal and other Apple frameworks directly from TypeScript: framework typings, exact selector spelling, delegate classes, render loops, sheets, Liquid Glass.",
+      "skills": [
+        "ns-ios-corespotlight",
+        "ns-ios-safe-area-smudge",
+        "ns-ios-scroll-under-bars",
+        "ns-ios-widgets"
+      ]
+    },
+    {
+      "title": "Testing & verification",
+      "description": "Unit tests (Jest/Vitest) for NativeScript code, end-to-end runners, and driving the iOS simulator / Android emulator from the shell: screenshots, frame-by-frame video checks, taps and swipes, fake location, permission grants, log triage.",
+      "skills": [
+        "ns-trace-debugging",
+        "ns-unit-testing"
+      ]
+    },
+    {
+      "title": "Tooling, build & assets",
+      "description": "The NativeScript CLI, bundlers (`@nativescript/vite`, `@nativescript/webpack`), app icons and launch assets, CI pipelines, code signing and release, debugging the build.",
+      "skills": [
+        "ns-file-qualifiers",
+        "ns-snippets",
+        "ns-uncaught-error-policy"
+      ]
+    },
+    {
+      "title": "Cross-platform UI & motion",
+      "description": "Patterns that look native on both platforms and ship a renderer for each: glass panels, animated sizing, sheets vs. in-page panels, theming, Tailwind/CSS tricks, gesture choreography.",
+      "skills": [
+        "ns-code-built-view-styling",
+        "ns-css-keyframes",
+        "ns-css-selectors",
+        "ns-css-variables-calc",
+        "ns-formatted-string-spans",
+        "ns-gridlayout-spec-strings",
+        "ns-input-accessory-dialogs",
+        "ns-keyboard-input",
+        "ns-line-height",
+        "ns-listview-recycling",
+        "ns-root-css-classes",
+        "ns-root-layout-overlays",
+        "ns-tabview-lazy-loading",
+        "ns-top-nav",
+        "ns-touch-animations",
+        "ns-view-animations"
+      ]
+    }
+  ]
 }

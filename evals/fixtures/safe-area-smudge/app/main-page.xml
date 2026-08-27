@@ -1,0 +1,33 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" actionBarHidden="true">
+  <GridLayout rows="auto, *">
+    <Label row="0" text="Agenda" class="h1 p-4" />
+    <ScrollView row="1">
+      <StackLayout paddingBottom="96">
+
+        <Label text="Up next" class="h2 p-4" />
+        <GridLayout columns="auto, *" class="p-4" tap="{{ onOpen }}">
+          <StackLayout col="0" width="8" height="8" borderRadius="4" backgroundColor="#22c55e" verticalAlignment="center" />
+          <Label col="1" text="Standup with the platform team" class="pl-2" />
+        </GridLayout>
+        <StackLayout height="1" backgroundColor="#e5e7eb" marginLeft="16" marginRight="16" />
+        <GridLayout columns="auto, *" class="p-4" tap="{{ onOpen }}">
+          <StackLayout col="0" width="8" height="8" borderRadius="4" backgroundColor="#f59e0b" verticalAlignment="center" />
+          <Label col="1" text="Design review" class="pl-2" />
+        </GridLayout>
+        <StackLayout height="1" backgroundColor="#e5e7eb" marginLeft="16" marginRight="16" />
+
+        <Label text="Library" class="h2 p-4" />
+        <StackLayout class="m-4" backgroundColor="#f8fafc" borderRadius="12">
+          <GridLayout class="p-4" tap="{{ onOpen }}">
+            <Label text="Release checklist" />
+          </GridLayout>
+          <StackLayout height="1" backgroundColor="#e5e7eb" marginLeft="16" marginRight="16" />
+          <GridLayout class="p-4" tap="{{ onOpen }}">
+            <Label text="Launch retro notes" />
+          </GridLayout>
+        </StackLayout>
+
+      </StackLayout>
+    </ScrollView>
+  </GridLayout>
+</Page>

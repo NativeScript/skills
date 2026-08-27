@@ -1,0 +1,18 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo" actionBarHidden="true">
+  <GridLayout rows="auto, *">
+    <!-- hand-rolled header: fake back row, no native behaviors -->
+    <GridLayout row="0" columns="auto, *, auto" class="p-4">
+      <Label col="0" text="‹ Back" tap="{{ onBack }}" />
+      <Label col="1" text="{{ title }}" class="h2 text-center" />
+      <Label col="2" text="Share" tap="{{ onShare }}" />
+    </GridLayout>
+    <ScrollView row="1">
+      <StackLayout class="p-4">
+        <Label text="Release checklist" class="h1" textWrap="true" />
+        <Label text="1. Tag the build" textWrap="true" />
+        <Label text="2. Verify store metadata" textWrap="true" />
+        <Label text="3. Submit for review" textWrap="true" />
+      </StackLayout>
+    </ScrollView>
+  </GridLayout>
+</Page>

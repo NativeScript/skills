@@ -13,4 +13,810 @@ defaults:
   threshold: 0.7
   grader_provider: anthropic
 
-tasks: []
+tasks:
+  - name: android-edge-to-edge
+    instruction: |
+      On Android 15 (API 35) this app's bottom TabView strip looks wrong: the bar's surface colour stops at a hard line and the page canvas colour fills the gesture-nav strip below it. Separately, compose-page's docked bottom bar (the "Attach / Send" row) sits underneath the gesture pill.
+
+      Fix both without adding any plugin:
+      1. Make the tab bar's colour run seamlessly to the physical bottom edge (app/app-root.xml and app/shell-page.xml). Headers must stay clear of the status bar.
+      2. Implement onRootLoaded in app/compose-page.ts so the docked bottom bar clears the gesture-nav area (adjust app/compose-page.xml if needed).
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/edge-to-edge"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" android-edge-to-edge
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent put androidOverflowEdge="bottom" (skip-bottom semantics) on the ROOT and the shell wrapper, rather than inverted values like all-but-bottom or none?
+          - Did compose-page read insets directly off the window (WindowMetrics or getRootWindowInsets) instead of waiting for an androidOverflowInset event that never fires on page layouts?
+          - Is only the stable navigation inset padded (not the IME inset)?
+
+        weight: 0.3
+
+  - name: android-modal-insets
+    instruction: |
+      The settings modal (app/settings-modal.xml, opened from main-page with fullscreen: true) renders horribly on Android only: every Label's box is ~50dp taller than its text, there are big phantom gaps between stacked labels, the emoji glyphs get pushed out of view, and content collides with the status bar. The identical markup is perfect on iOS and in the main window.
+
+      Fix it properly: create app/modal-insets.ts exporting a reusable helper that configures the modal correctly from its loaded event, wire it up in app/settings-modal.ts, and add any attribute needed in app/settings-modal.xml. The modal's own padding already keeps content away from the screen edges, so nothing inside needs edge-anchoring.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/window-insets"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" android-modal-insets
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent identify that the dialog window is edge-to-edge with no inset consumer, so every Label pads itself?
+          - Does the helper find the true modal root (the view owning _dialogFragment/_bottomSheetFragment) rather than assuming the template root is it?
+          - Are both the edge values zeroed AND the consumed flags set?
+
+        weight: 0.3
+
+  - name: ios-scroll-under-bars
+    instruction: |
+      On iOS this app's feed (app/main-page.xml) stops at a hard horizontal line above the floating tab bar / home indicator instead of flowing underneath it — the list looks boxed-in and never reaches the bottom of the screen.
+
+      Fix app/main-page.xml (XML-only change) so the content scrolls beneath the floating chrome to the physical bottom edge, while the "Last item" row can still be scrolled fully clear of the bar.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/scroll-under-bars"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" ios-scroll-under-bars
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent remove iosOverflowSafeArea="false" from the ScrollView (accepting the default overflow) instead of trying padding/margin/background tricks on the viewport?
+          - Did it add generous bottom padding INSIDE the scroll content so the last item can rest above the floating bar?
+
+        weight: 0.3
+
+  - name: ios-safe-area-smudge
+    instruction: |
+      Two iOS-only rendering bugs on the agenda page (app/main-page.xml):
+      1. While scrolling, a status dot occasionally smears into a tall coloured pill and a 1px divider inflates into a full-width gray band near the bottom of the screen; scrolling on fixes it.
+      2. With short content, the "Library" card at the bottom renders with a long empty band below its last row at load.
+
+      Fix app/main-page.xml. Constraints: don't restructure the layout, and the feed must still scroll under the floating chrome — do not clip the scroll viewport itself.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/safe-area-smudge"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" ios-safe-area-smudge
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent recognise the safe-area expansion mechanism (edge lands on the boundary → view stretched to the physical edge) rather than calling it a paint glitch?
+          - iosOverflowSafeAreaEnabled="false" on the card container (load-time variant) AND iosOverflowSafeArea="false" on the standalone small views?
+          - Crucially: nothing disabled on the ScrollView itself.
+
+        weight: 0.3
+
+  - name: navigation-transitions
+    instruction: |
+      Review app/navigation.ts. Complaints: pushes look web-like and flat; the iOS edge-swipe back gesture stutters and looks detached from the nav bar; Android's predictive back preview looks wrong; and after logout the user can still navigate back into the app.
+
+      Fix all three functions so navigation looks and behaves fully native on both platforms. Keep the exported function signatures.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/navigation-transitions"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" navigation-transitions
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent DELETE the transition overrides on the ordinary push (rather than picking a "better" custom transition)?
+          - Are explicit options used only to suppress animation on the navigations the user never performs (bootstrap, logout reset)?
+
+        weight: 0.3
+
+  - name: ios-corespotlight
+    instruction: |
+      Add Spotlight search indexing to this iOS app. Create app/spotlight.ts exporting:
+      - reindex(items: Array<{ id: string; kind: string; title: string; description: string; keywords: string[] }>): rebuilds the on-device index — removes everything previously indexed, then indexes the given items. Indexed items must not silently disappear after 30 days.
+      - spotlightDeepLink(uniqueIdentifier: string): string — maps an indexed item's identifier back to a myapp:// URL for tap-through routing.
+
+      reindex will be called with a few thousand items right after the data feed loads. The app must never freeze or become unresponsive during or after indexing. iOS only (no-op on Android). No plugins.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" ios-corespotlight
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Does the code avoid handing live JS arrays to indexSearchableItems (ArrayAdapter + dispatch_apply = V8 isolate deadlock)? Materializing into NSMutableArray/NSArray on the JS thread is the required move, including the nested keywords array on the attribute set.
+          - Are further native calls inside CoreSpotlight completion handlers deferred via Utils.dispatchToMainThread?
+          - Is expirationDate set to NSDate.distantFuture?
+
+        weight: 0.3
+
+  - name: ios-widgets-live-activity
+    instruction: |
+      Our Live Activity / Dynamic Island renders completely empty on device. System logs show:
+        WidgetRenderer: Archive was nil. LiveActivity will be empty
+      and earlier:
+        SwiftUI: No image named 'logo' found in asset catalog for .../SharedWidget_SharedWidget.bundle
+
+      The brand image lives at Shared_Resources/iOS/SharedWidget/Sources/SharedWidget/Resources/logo.png (a 1024×1024 master asset) and is declared via resources: [.process("Resources")] in Package.swift.
+
+      Fix Shared_Resources/iOS/SharedWidget/Sources/SharedWidget/WidgetAssets.swift so BrandLogo renders reliably inside the widget extension and can never blank the whole activity again, and add a short comment in the file stating what must happen to the 1024px asset itself.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/widgets-live-activity"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" ios-widgets-live-activity
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Does the fix load the PNG bytes directly (bundle path → UIImage(contentsOfFile:) → Image(uiImage:)) instead of any named lookup, which only consults compiled asset catalogs that SPM .process() never produces?
+          - Is the SPM resource bundle located by candidate URLs with a nil fallback (never Bundle.module, which fatalErrors)?
+          - Does the comment explain the ActivityKit archive size limit — the 1024px master must be pre-resized (~3× its largest display size, e.g. sips -Z 96) because .resizable().frame() does not shrink what gets archived?
+
+        weight: 0.3
+
+  - name: unit-testing-setup
+    instruction: |
+      Set up on-device unit tests for this app using the current NativeScript test runner (Karma is deprecated — do not add any karma packages). Configure the project so `ns test ios` / `ns test android` work:
+      - add the runner's config file(s) at the project root,
+      - update package.json with the packages the runner needs, each in the correct dependency section,
+      - write app/tests/date-utils.spec.ts covering minutesBetween, isSameDay and formatDuration from app/date-utils.ts — include formatDuration's 0-hour, exact-hour and hours+minutes cases.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/unit-testing"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" unit-testing-setup
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent set up the Vitest-based v5 runner (vitest.config.mts with nativeScript() plugin) rather than the deprecated Karma flow?
+          - Is @valor/nativescript-websockets a regular dependency (native code) while the runner/vitest are devDependencies?
+          - Do the specs use plain vitest imports (describe/it/expect)?
+
+        weight: 0.3
+
+  - name: snippets-search-tool
+    instruction: |
+      There's a public catalog of NativeScript code snippets with a JSON API. Create scripts/snippets.mjs (plain Node, no dependencies) with two subcommands:
+      - search <term> [--category <token>] — prints each matching snippet's title, slug and public page URL, following pagination until the catalog is exhausted;
+      - show <slug> — fetches that one snippet and prints its title and code.
+      Exit non-zero with a clear message when nothing matches.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" snippets-search-tool
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Does the script hit https://snippets.nativescript.org/api/snippets with search/category params and follow nextCursor pagination?
+          - Does show use GET /api/snippets/{slug} and print the code field?
+          - Native fetch only, no installed packages.
+
+        weight: 0.3
+
+  - name: code-built-toast
+    instruction: |
+      Create app/toast.ts exporting showToast(message: string): builds a small rounded toast card entirely in code (new StackLayout / new Label — no XML template) and presents it via the app's root layout, auto-dismissing after 2.5 seconds.
+
+      This app uses Tailwind (palette in tailwind.config.js). The toast must render correctly in BOTH light and dark mode, and must be reliable in release builds. No new dependencies.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/code-built-toast"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" code-built-toast
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent style the code-built view with inline properties (hex from the palette) instead of Tailwind utility class names that the compiler may purge when they appear only in code?
+          - Is the palette chosen at SHOW time via Application.systemAppearance() (not at module load)?
+
+        weight: 0.3
+
+  - name: composer-over-sheet
+    instruction: |
+      Bug on the chat page (app/chat-page.ts): when the filters page-sheet opens on iOS, the keyboard-docked composer bar stays visible floating ON TOP of the sheet; and after swipe-down dismissing the sheet, the bar sometimes never comes back.
+
+      Fix it centrally in app/dialogs.ts and app/chat-page.ts so every current and future sheet behaves: the bar must slide away as any sheet opens and return when it closes (including swipe-down dismissal, where no button code runs). Do not hide the composer view and do not fight first-responder from page code. The installed @nativescript/input-accessory exposes suspend() and restore() on InputAccessoryManager.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/input-accessory-dialogs"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" composer-over-sheet
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Is the suspend/restore pair routed through the central dialog service (every sheet), not sprinkled at one call site?
+          - Does restore fire from the modal's closeCallback so swipe-down dismissal also restores the bar?
+          - Nothing tries resignFirstResponder or hiding the composer view — both lose to the plugin's auto-restore.
+
+        weight: 0.3
+
+  - name: chat-composer
+    instruction: |
+      Build a chat screen for this app: app/chat-page.xml + app/chat-page.ts (module style, like main-page). Requirements:
+      - a single message input docked to the keyboard iMessage-style: it docks directly above the keyboard when open, rests at the bottom edge when closed, follows the interactive swipe-to-dismiss, and grows as the user types multiple lines;
+      - a scrolling message list above it and a circular send button next to the input;
+      - pressing return inserts a newline — only the send button submits;
+      - add whatever package the implementation needs to package.json;
+      - this screen will be routed OUTSIDE the app's tab shell — state why in a one-line comment in chat-page.ts.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" chat-composer
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent pick @nativescript/input-accessory (composer shape) rather than iqkeyboardmanager (form shape)?
+          - TextView (not TextField), minHeight on it, no returnKeyType="send"/returnPress wiring, updateAccessoryHeight on text change and after send, cleanup on unload?
+          - Does the comment explain that a docked composer must own the bottom edge, so the screen cannot show a tab bar?
+
+        weight: 0.3
+
+  - name: wrapped-label-gaps
+    instruction: |
+      On both platforms, the wrapped Labels on app/main-page.xml (classes text-2xl / text-base / text-sm) render with huge vertical gaps between the wrapped lines of a single label — paragraph-like air inside one label. Single-line labels look fine. This app uses @nativescript/tailwind.
+
+      Fix the ROOT CAUSE so every current and future text-* label renders with normal native line rhythm — not by patching individual labels.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/line-height"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" wrapped-label-gaps
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent identify that NativeScript line-height is ADDITIVE spacing (not the web line box), so Tailwind's default fontSize tuples inject ~24dp of air into wrapped text?
+          - Is the fix a theme.fontSize replacement (plain dp strings) rather than sprinkling leading-* utilities per label?
+
+        weight: 0.3
+
+  - name: native-top-bar
+    instruction: |
+      Replace the hand-rolled header row on app/detail-page.xml with the platform's native top bar:
+      - system back behavior on both platforms — iOS keeps its native chevron and edge-swipe pop; Android shows a properly-sized (~24dp) back glyph that pops on tap;
+      - title "Checklist" (native truncation for long values);
+      - a right-side "Share" action;
+      - main-page stays headerless (it's a branded tab root).
+      Use app/app.css for any styling the bar items need.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/top-nav"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" native-top-bar
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Native <ActionBar> as a top-level Page child (not inside the layout), with NavigationButton for back?
+          - Android: icon set (font:// or res://) with tap handler AND explicit sizing; iOS: icon left null so the system chevron survives, knowing iOS never fires the tap?
+          - No attempt to re-create the header synthetically.
+
+        weight: 0.3
+
+  - name: press-feedback
+    instruction: |
+      Add consistent press feedback to this app: every tappable view should subtly scale (~0.97) on press with a platform-appropriate animation, configured ONCE for the whole app — not per view. Two exceptions on app/main-page.xml: the plain list rows must NOT animate at all, and the hero card should press more strongly (scale ~0.9). Files: app/app.ts, app/main-page.xml (+ app/main-page.ts if needed). Do not add touch event handlers for this.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/touch-animations"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" press-feedback
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - TouchManager.enableGlobalTapAnimations + TouchManager.animations set once in app.ts BEFORE Application.run?
+          - Rows opted out with the singular ignoreTouchAnimation (the plural silently no-ops)?
+          - Hero override via the touchAnimation property, not a touch handler?
+
+        weight: 0.3
+
+  - name: feed-store-events
+    instruction: |
+      Create app/feed-store.ts exporting a FeedStore class for a list screen, backed by the data structure NativeScript list controls bind to incrementally. API:
+      - items — the bindable collection
+      - add(item), removeAt(i), replaceAt(i, item)
+      - resort(compareFn) — MUST leave a bound ListView showing the new order (a plain in-place sort does not)
+      - clear() — one change notification, not N
+      - subscribe(cb) — cb receives { kind: 'reset' | 'patch', index, count, removed } for EVERY mutation above, including truncation via a length assignment from outside.
+      Copy any values you need out of the underlying change event — do not retain the event object.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" feed-store-events
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Does subscribe() treat 'splice' as the action for length assignments (and map push/pop/setItem correctly with index/addedCount/removed)?
+          - Does resort avoid ObservableArray.sort()/reverse() (which emit nothing) — using a copy-sort + splice(0, length, ...sorted) or an explicit refresh strategy?
+          - Are fields copied out of the change args (the framework reuses the args object)?
+
+        weight: 0.3
+
+  - name: profile-vm-bugs
+    instruction: |
+      Three bugs on the profile page, reproduced in app/profile-vm.ts and app/main-page.ts (symptoms described in the comments):
+      1. After addTag() runs, the Label bound to {{ tags }} never updates.
+      2. Code reading vm.displayName always gets null, while vm.get('displayName') works.
+      3. The celebrate label's confetti should run only on the FIRST tap but runs on every tap.
+      Fix all three with minimal changes.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/observable-set"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" profile-vm-bugs
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Bug 1: did the agent recognize set(sameRef) as a reference-equality no-op and fix via WrappedValue.wrap, a new array, or ObservableArray?
+          - Bug 2: displayName must be a creation-time key of fromObject (dot accessors are only installed for initial keys)?
+          - Bug 3: did they know view.once() does not work for gesture names and switch to on + explicit off (or a guard)?
+
+        weight: 0.3
+
+  - name: detail-page-lifecycle
+    instruction: |
+      Add a detail page to this app: app/detail-page.xml + app/detail-page.ts (module style), navigated to from main-page with a context object { id }. Requirements:
+      - the view model is built exactly once per forward visit — NOT rebuilt when the user comes back from a deeper page;
+      - copy what you need from the navigation context onto the view model (it is not available later);
+      - a 1s "elapsed" ticker starts only once the page is fully current and is reliably stopped when the page's native views detach;
+      - wire the navigation from main-page (add a button).
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" detail-page-lifecycle
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Setup in navigatingTo guarded by args.isBackNavigation; context copied there (page.navigationContext is cleared on back)?
+          - Timer lifecycle on navigatedTo/unloaded (not loaded/navigatedFrom — unloaded fires BEFORE navigatedFrom)?
+
+        weight: 0.3
+
+  - name: theme-color-utils
+    instruction: |
+      Create app/color-utils.ts with small helpers our theming code needs, using @nativescript/core's Color correctly:
+      - withAlpha(hex6: string, alpha: number): Color — '#3366FF' + 0..255 alpha
+      - fromPackedInt(argb: number): Color — accepts values like 0xff3366ff; document (in a comment) why 0x3366ff would be invisible
+      - toCssHex(c: Color): string — always returns an 8-digit '#RRGGBBAA' string even for opaque colors
+      - parseUserColor(input: string, fallback: string): Color — never throws on garbage input.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" theme-color-utils
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Does the code respect the two orderings (hex strings RRGGBBAA alpha-last; ints/argb 0xAARRGGBB alpha-first)?
+          - toCssHex must handle .hex returning 6 digits for opaque colors; fromPackedInt's comment must explain the missing-alpha-byte invisibility trap.
+
+        weight: 0.3
+
+  - name: tablet-layout-variant
+    instruction: |
+      Our player screen has a tablet layout at app/views/player/player-page.tablet.xml but tablets keep getting the phone layout — the file is completely ignored. Fix the variant file naming so tablet-class devices (min 600 dip) load the two-column layout, and add a phone-landscape variant app/views/player/player-page.land.xml (copy the phone layout with the title saying "landscape"). Leave the base file for phones in portrait.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/file-qualifiers"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" tablet-layout-variant
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent know .tablet/.phone are not qualifiers (no deviceType matcher exists) and that minWH600 is the tablet convention?
+          - Did it keep the base file as the phone-portrait default?
+
+        weight: 0.3
+
+  - name: listview-jank
+    instruction: |
+      Two bugs on the feed list (app/main-page.ts + app/main-page.xml):
+      1. Scrolling janks badly on older devices, and the analytics "impression" event fires far more often than items are first shown.
+      2. The featured template (every 10th row) never applies — all rows render with the default template.
+      Fix both. Impressions should fire at most once per item index.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/listview"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" listview-jank
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Does itemLoading only create a view when args.view is absent, and reconfigure it otherwise (recycling contract)?
+          - Did the agent spot that the selector returned 'hero' while the template key is 'featured' — and that unknown keys silently fall back to the default template?
+          - Are analytics side effects deduplicated (itemLoading re-fires on recycle and refresh)?
+
+        weight: 0.3
+
+  - name: tab-fetch-android
+    instruction: |
+      Android-only problem (see the comment in app/main-page.ts): the analytics dashboard shows feed fetches for tabs the user never opened — sometimes twice — and first paint is slow because the Library tab's fetch runs at startup. iOS behaves as expected. Make both platforms load tabs lazily and make each tab's fetch run at most once, without restructuring the screen.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/tabview-lazy"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" tab-fetch-android
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent identify Android's default one-tab-to-each-side preload as the cause and set androidOffscreenTabLimit="0"?
+          - Is per-tab work guarded so repeated loaded events (tab re-entry, page re-navigation) don't refetch?
+
+        weight: 0.3
+
+  - name: binding-fixes
+    instruction: |
+      Two broken bindings on app/main-page.xml (see the comments):
+      1. The done-count Label crashes the page with "Invalid expression syntax".
+      2. Editing the full-name TextField corrupts BOTH firstName and firstNameSuffix in the model.
+      Fix both (app/main-page.xml + app/main-page.ts). The done count must still update when items change; the TextField should display the combined name without corrupting the model.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/binding-expr"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" binding-fixes
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Arrow functions are not in the binding expression allow-list — was the count computed in the view model (and kept updating)?
+          - XML bindings are two-way by default and write-back does global string substitution of the source property name — did the agent either opt out ({{ expr, expr, false }}), bind a single computed property, or rename to avoid the prefix collision, and explain which?
+
+        weight: 0.3
+
+  - name: grid-spec-fix
+    instruction: |
+      The grid on app/main-page.xml is broken: the first column crashes some builds, and two columns render as hairlines (see the comment — intended: icon column sized to content, two equal flexible columns, a fixed 48dp trailing column). Fix the spec.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/gridlayout"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" grid-spec-fix
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent know 'Auto' is case-sensitive (throws) and that 1fr/50% parseInt into 1dp/50dp silently?
+          - Is the final spec "auto, *, *, 48" (or equivalent star ratio)?
+
+        weight: 0.3
+
+  - name: animation-helpers
+    instruction: |
+      Create app/animation-utils.ts exporting:
+      - slideInFromLeft(view): the view starts 300dp off-screen left and animates to its resting position (calling it twice must not move the view twice);
+      - startPulse(view) / stopPulse(view): a repeating subtle scale pulse that can be stopped at any time — stopping must never leave a promise hanging forever or make the next startPulse throw "Animation is already playing.";
+      - every rejection handled, including the two different rejection shapes NativeScript animations produce.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" animation-helpers
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - slideIn sets translateX directly then animates translate to 0 (transforms are absolute destinations, not deltas)?
+          - Pulse never awaits a cancellable play (iOS leaves cancelled promises pending), guards with isPlaying, and catches both rejection shapes?
+
+        weight: 0.3
+
+  - name: card-entrance-css
+    instruction: |
+      The card entrance animation in app/app.css is broken (symptoms in the comment): the title never tints, the card snaps back to its start position when the animation ends, and animation-direction/animation-play-state appear ignored. Fix the CSS so the card slides up, fades in, and STAYS at its final position — and handle the tint some way that actually works in NativeScript.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/css-keyframes"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" card-entrance-css
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - animation-fill-mode: forwards (or both) added to stop the snap-back?
+          - Did the agent know only 12 properties (+transform) animate — color silently dropped — and that alternate/play-state are unimplemented?
+
+        weight: 0.3
+
+  - name: cancellable-fetch
+    instruction: |
+      Create app/api.ts exporting fetchJsonWithTimeout<T>(url: string, timeoutMs: number): Promise<T> for this NativeScript app: performs a GET with fetch, aborts cleanly after the timeout, always clears the timer, and throws a distinguishable TimeoutError on abort. It must run inside the NativeScript runtime as-is (mind which web globals actually exist there).
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" cancellable-fetch
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent know AbortController is NOT a NativeScript global (throws "AbortController is not defined") and import it from '@nativescript/core/abortcontroller', while fetch itself IS global and honors signal?
+
+        weight: 0.3
+
+  - name: status-aware-http
+    instruction: |
+      Our API layer treats backend error pages as data: a 500 with a JSON error body "succeeds", and a 404 HTML page surfaces as a confusing JSON parse error. Create app/http-client.ts exporting getJson<T>(url): Promise<T> and postJson<T>(url, body): Promise<T> using @nativescript/core's Http so that any non-2xx response throws an Error containing the status code and the first part of the body. Explain in a one-line comment why the convenience helpers can't be used directly.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" status-aware-http
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Does the wrapper route through Http.request and gate on res.statusCode before content conversion (the helpers never check status)?
+          - Does the error message carry status + a body excerpt for debuggability?
+
+        weight: 0.3
+
+  - name: css-selector-fixes
+    instruction: |
+      Three rules in app/app.css silently never apply (symptoms in the comments): the primary-button highlight, the flower-tag tint (tags is set to values like "my-flower" and "flower fresh" from code — only the EXACT token "flower" should match), and the ActionBar item styling. Fix the stylesheet (and app/main-page.xml where the bar items need it) so all three work.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/css-selectors"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" css-selector-fixes
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - [kind*='primary'] prefixed with a type (button[kind*='primary'])?
+          - Did the agent keep ~= for the exact-token requirement (knowing "my-flower" must NOT match) rather than switching to *=?
+          - Bar items styled through their classes since NavigationButton/ActionItem register no CSS type?
+
+        weight: 0.3
+
+  - name: css-vars-calc-fixes
+    instruction: |
+      Two silent styling failures in app/app.css (see comments): CTA labels lose their colour entirely on screens where --accent isn't defined instead of falling back to the brand blue, and the banner's calc() width never applies at all. Fix the stylesheet.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/css-vars"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" css-vars-calc-fixes
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - var(--accent, var(--brand)) style fallback (an undefined var with no fallback silently unsets the property)?
+          - The 100%-minus-gutter effect rebuilt without mixing px and % in one calc (e.g. width 100% + horizontal margin)?
+
+        weight: 0.3
+
+  - name: conditional-theming-css
+    instruction: |
+      Theme this app in app/app.css with NO TypeScript branching — pure CSS:
+      - a .toolbar class: light surface on Android light, dark surface on Android dark; untouched on iOS;
+      - a .card class with a light default and a dark-mode override that works even on OS versions where no light class exists;
+      - 32dp content padding for .content on tablets only;
+      - a shorter .hero (height 140) in landscape only.
+      Add the classes to app/main-page.xml elements so they're exercised.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" conditional-theming-css
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - All four conditions expressed via the framework root classes (.ns-android/.ns-dark/.ns-tablet/.ns-landscape)?
+          - Light defaults written on bare selectors with .ns-dark overrides (never keyed on .ns-light)?
+
+        weight: 0.3
+
+  - name: rating-component
+    instruction: |
+      Create a reusable star-rating component for this XML app: app/components/rating.ts exporting a Rating view class (a GridLayout subclass rendering N tappable star Labels, with a "value" property), and use it on app/main-page.xml via an XML namespace. No Angular/Vue — plain NativeScript XML wiring.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" rating-component
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - xmlns prefix mapped to the module path (relative to app/) with the exported class name as the tag?
+          - Does the component render stars and react to taps / value changes?
+
+        weight: 0.3
+
+  - name: sheet-overlay
+    instruction: |
+      Add a lightweight in-app bottom sheet to this app WITHOUT native modals: change the app root so overlays can float over the current page, then create app/sheet.ts exporting openSheet(view: View): Promise<void> and closeSheet(): Promise<void> with: a tap-to-close dimmed shade behind the sheet, slide-up enter and slide-down exit animations, and no unhandled promise rejections even if openSheet is called twice with the same view.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" sheet-overlay
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - RootLayout at the app root + getRootLayout().open with shadeCover and enterFrom/exitTo TransitionAnimations?
+          - Every open/close promise caught (they reject with reasons like "View ... has already been added to the root layout")?
+
+        weight: 0.3
+
+  - name: second-window
+    instruction: |
+      Prepare this app for the NativeScript 9.1 window model:
+      1. Create app/windows.ts that provides window content the 9.1 way (no deprecated launch event): the primary window shows 'app-root'; any additional window shows the module 'aux-root' and receives the data passed when it was opened. Export openAuxWindow(data) guarded so unsupported devices don't crash.
+      2. Fix whatever else in the project would prevent a second window from actually opening on Android.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" second-window
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Application.setWindowContentResolver branching on request.isPrimary, with app init on the ready event (launch is deprecated and never fires for additional windows)?
+          - Did the agent know the stock template's launchMode="singleTask" makes Android hand the intent to the existing activity — switching to singleInstancePerTask (API 31+) or standard?
+
+        weight: 0.3
+
+  - name: crash-policy-config
+    instruction: |
+      Since upgrading to NativeScript 9.1 our production app no longer crashes on uncaught JS errors — it logs and limps along — and our native crash reporter has gone completely silent. We WANT real crashes so the reporter catches them. Fix nativescript.config.ts, and add an app/error-reporting.ts that additionally forwards uncaught errors to console before the crash.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/uncaught-error"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" crash-policy-config
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - uncaughtErrorPolicy: 'throw' moved to the config top level (nested placements are silently ignored)?
+          - discardUncaughtJsExceptions removed entirely (true suppresses 'throw'; false is ignored)?
+
+        weight: 0.3
+
+  - name: trace-bootstrap
+    instruction: |
+      We're chasing silent binding failures and an accessibility issue. Create app/debug-trace.ts exporting enableFrameworkDiagnostics(): turns on @nativescript/core's internal diagnostics for binding problems (including binding ERRORS), layout, navigation AND accessibility; installs a custom writer that prefixes lines with '[diag]' WITHOUT duplicating every line; and makes Trace.error() log instead of crashing the app. Note any category quirks you relied on in comments.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" trace-bootstrap
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Did the agent know Trace.categories.All omits BindingError and Accessibility, and that Trace.enable() alone prints nothing?
+          - clearWriters before addWriter (default ConsoleWriter would duplicate)? setErrorHandler with the (sic) handlerError method so Trace.error doesn't rethrow?
+
+        weight: 0.3
+
+  - name: formatted-status-fix
+    instruction: |
+      Two bugs in app/status-card.ts (see comments): the count's blue colour never applies, and after showPlain() runs the label still shows the old formatted text. Fix both with minimal changes.
+
+    workspace:
+      - src: "../../evals/fixtures/ns-app-ts"
+        dest: "."
+      - src: "../../evals/fixtures/formatted-string"
+        dest: "."
+    graders:
+      - type: deterministic
+        run: node "$SKILLGRADE_REPO/evals/graders/check.mjs" formatted-status-fix
+        weight: 0.7
+      - type: llm_rubric
+        rubric: |
+          - Span colour set via the color property (there is no functioning foregroundColor)?
+          - showPlain clears formattedText (setting .text while formattedText is set is a silent no-op) before assigning text?
+
+        weight: 0.3

@@ -51,23 +51,334 @@ footer{margin-top:64px;color:var(--muted);font-size:13px}
 @media (prefers-reduced-motion:no-preference){.bar i::after{transition:width .4s ease}}
 </style>
 <main>
-<div class="eyebrow">@nativescript/skills · v0.0.0 · 2026-08-21</div>
+<div class="eyebrow">@nativescript/skills · v1.0.0 · 2026-08-27</div>
 <h1>NativeScript Skills — evaluation</h1>
-<p class="lede">Static spec lint over every <code>SKILL.md</code>, and a behavioural <a href="https://github.com/mgechev/skillgrade">skillgrade</a> run: one realistic developer prompt per skill, all skills installed at once so discovery is part of the test.</p>
+<p class="lede">Static spec lint over every <code>SKILL.md</code>, and a behavioural <a href="https://github.com/mgechev/skillgrade">skillgrade</a> run: one realistic developer prompt per skill, all skills installed at once so discovery is part of the test, 1 trials per task, plus a no-skills baseline.</p>
 
 <div class="stats">
-  <div class="stat ok"><div class="v">0/0</div><div class="l">pass Agent Skills spec lint</div></div>
-  <div class="stat accent"><div class="v">—</div><div class="l">mean reward with skills</div></div>
-  <div class="stat accent"><div class="v">—</div><div class="l">trials where the agent found the right skill unprompted</div></div>
-  <div class="stat "><div class="v">—</div><div class="l">outcome uplift vs. no skills</div></div>
+  <div class="stat ok"><div class="v">37/37</div><div class="l">pass Agent Skills spec lint</div></div>
+  <div class="stat accent"><div class="v">0.99</div><div class="l">mean reward with skills (37/37 trials ≥ 0.5)</div></div>
+  <div class="stat accent"><div class="v">97%</div><div class="l">trials where the agent found the right skill unprompted</div></div>
+  <div class="stat ok"><div class="v">+0.18</div><div class="l">outcome uplift vs. no skills (1.00 vs 0.82)</div></div>
 </div>
 
 <h2>Behavioural results <span class="kicker">skillgrade</span></h2>
 <p>Reward = 0.25 × <em>skill loaded</em> (seen in the tool transcript) + 0.75 × weighted outcome checks. Baseline runs the identical prompt with no skills installed; Δ compares outcome checks only.</p>
-<p class="note">No skillgrade results under <code>evals/results/</code> yet and <code>evals/tasks.mjs</code> has no tasks. Run <code>npm run eval:smoke</code> (and optionally <code>npm run eval:baseline</code>), then <code>npm run eval:report</code>.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>skill · task</th><th>reward (skills on)</th><th class="num">pass</th><th class="num">loaded</th><th>baseline (no skills)</th><th class="num">Δ outcome</th><th class="num">avg</th></tr></thead>
+<tbody><tr class="cat"><td colspan="7">android/</td></tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-android-edge-to-edge<div class="sub">android-edge-to-edge · 88 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0.273"><i></i><b>0.27</b></span></td>
+    <td class="num pos">+0.73</td>
+    <td class="num muted">44s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-android-window-insets<div class="sub">android-modal-insets · 104 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">62s</td>
+  </tr><tr class="cat"><td colspan="7">core/</td></tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-binding-expressions<div class="sub">binding-fixes · 58 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">218s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-color-formats<div class="sub">theme-color-utils · 53 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">77s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-http-gotchas<div class="sub">status-aware-http · 40 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">46s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-multi-window<div class="sub">second-window · 51 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">412s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-navigation-transitions<div class="sub">navigation-transitions · 52 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0.5"><i></i><b>0.50</b></span></td>
+    <td class="num pos">+0.50</td>
+    <td class="num muted">20s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-observable-array-change-events<div class="sub">feed-store-events · 60 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">203s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-observable-set-semantics<div class="sub">profile-vm-bugs · 64 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">36s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-page-navigation-lifecycle<div class="sub">detail-page-lifecycle · 62 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">234s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-web-globals<div class="sub">cancellable-fetch · 56 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">42s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-xml-custom-components<div class="sub">rating-component · 53 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0.667"><i></i><b>0.67</b></span></td>
+    <td class="num pos">+0.33</td>
+    <td class="num muted">142s</td>
+  </tr><tr class="cat"><td colspan="7">ios/</td></tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-ios-corespotlight<div class="sub">ios-corespotlight · 83 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">183s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-ios-safe-area-smudge<div class="sub">ios-safe-area-smudge · 71 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0"><i></i><b>0.00</b></span></td>
+    <td class="num pos">+1.00</td>
+    <td class="num muted">33s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-ios-scroll-under-bars<div class="sub">ios-scroll-under-bars · 49 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">16s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-ios-widgets<div class="sub">ios-widgets-live-activity · 109 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0.643"><i></i><b>0.64</b></span></td>
+    <td class="num pos">+0.36</td>
+    <td class="num muted">80s</td>
+  </tr><tr class="cat"><td colspan="7">testing/</td></tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-trace-debugging<div class="sub">trace-bootstrap · 57 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">42s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-unit-testing<div class="sub">unit-testing-setup · 79 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">441s</td>
+  </tr><tr class="cat"><td colspan="7">tooling/</td></tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-file-qualifiers<div class="sub">tablet-layout-variant · 51 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">18s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-snippets<div class="sub">snippets-search-tool · 85 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">51s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-uncaught-error-policy<div class="sub">crash-policy-config · 44 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">44s</td>
+  </tr><tr class="cat"><td colspan="7">ui/</td></tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-code-built-view-styling<div class="sub">code-built-toast · 50 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0.09999999999999999"><i></i><b>0.10</b></span></td>
+    <td class="num pos">+0.90</td>
+    <td class="num muted">173s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-css-keyframes<div class="sub">card-entrance-css · 44 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">64s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-css-selectors<div class="sub">css-selector-fixes · 41 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">683s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-css-variables-calc<div class="sub">css-vars-calc-fixes · 53 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">19s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot warn"></span>ns-formatted-string-spans<div class="sub">formatted-status-fix · 51 lines</div></td>
+    <td><span class="bar warn" style="--v:0.7499999999999999"><i></i><b>0.75</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">0/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">-0.00</td>
+    <td class="num muted">15s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-gridlayout-spec-strings<div class="sub">grid-spec-fix · 53 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0.333"><i></i><b>0.33</b></span></td>
+    <td class="num pos">+0.67</td>
+    <td class="num muted">18s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-input-accessory-dialogs<div class="sub">composer-over-sheet · 79 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">251s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-keyboard-input<div class="sub">chat-composer · 103 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0.538"><i></i><b>0.54</b></span></td>
+    <td class="num pos">+0.46</td>
+    <td class="num muted">164s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-line-height<div class="sub">wrapped-label-gaps · 53 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0.636"><i></i><b>0.64</b></span></td>
+    <td class="num pos">+0.36</td>
+    <td class="num muted">26s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-listview-recycling<div class="sub">listview-jank · 50 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0.6"><i></i><b>0.60</b></span></td>
+    <td class="num pos">+0.40</td>
+    <td class="num muted">32s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-root-css-classes<div class="sub">conditional-theming-css · 44 lines</div></td>
+    <td><span class="bar ok" style="--v:0.864"><i></i><b>0.86</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0.8179999999999998"><i></i><b>0.82</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">33s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-root-layout-overlays<div class="sub">sheet-overlay · 51 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">223s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-tabview-lazy-loading<div class="sub">tab-fetch-android · 48 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0.5"><i></i><b>0.50</b></span></td>
+    <td class="num pos">+0.50</td>
+    <td class="num muted">26s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-top-nav<div class="sub">native-top-bar · 94 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">271s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-touch-animations<div class="sub">press-feedback · 78 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num ">+0.00</td>
+    <td class="num muted">38s</td>
+  </tr><tr>
+    <td class="mono"><span class="dot ok"></span>ns-view-animations<div class="sub">animation-helpers · 53 lines</div></td>
+    <td><span class="bar ok" style="--v:1"><i></i><b>1.00</b></span></td>
+    <td class="num">1/1</td>
+    <td class="num">1/1</td>
+    <td><span class="bar base" style="--v:0.7269999999999999"><i></i><b>0.73</b></span></td>
+    <td class="num pos">+0.27</td>
+    <td class="num muted">250s</td>
+  </tr></tbody></table></div>
+<h3>Checks that did not always pass (skills on)</h3>
+<div class="tablewrap"><table><thead><tr><th>skill</th><th>check</th><th class="num">pass</th><th>example</th></tr></thead><tbody><tr><td class="mono">ns-root-css-classes</td><td>light default on bare selector, not .ns-light</td><td class="num">0/1</td><td class="muted">.ns-light is absent on iOS &lt;= 12 — defaults belong on bare selectors</td></tr></tbody></table></div>
+<div class="grid2" style="margin-top:16px">
+<div class="card"><h3>Where the skills earn their keep</h3><p class="muted" style="margin:0 0 6px">Largest outcome uplift vs. no skills, and what the no-skill agent got wrong most often.</p><ul>
+<li><code>ns-ios-safe-area-smudge</code> <b class="pos">+1.00</b> — <span class="muted">baseline passed every check</span></li><li><code>ns-code-built-view-styling</code> <b class="pos">+0.90</b> — presented via the root layout (1/1); inline colors from the palette (1/1); dark mode handled explicitly (1/1)</li><li><code>ns-android-edge-to-edge</code> <b class="pos">+0.73</b> — root skips bottom inset only (1/1); shell wrapper passes bottom inset through (1/1); compose page reads the nav inset from the window (1/1)</li><li><code>ns-gridlayout-spec-strings</code> <b class="pos">+0.67</b> — no web units or bad casing in specs (1/1); auto + fixed columns kept (1/1)</li><li><code>ns-navigation-transitions</code> <b class="pos">+0.50</b> — no canned name transitions anywhere (1/1); startup navigation not animated (1/1); logout not animated (1/1)</li><li><code>ns-tabview-lazy-loading</code> <b class="pos">+0.50</b> — offscreen preloading disabled (1/1)</li>
+</ul></div>
+<div class="card"><h3>Adherence gaps with the skill loaded</h3><p class="muted" style="margin:0 0 6px">The agent read the skill and still slipped — candidates for a wording pass.</p><ul>
+<li><code>ns-root-css-classes</code> — light default on bare selector, not .ns-light <span class="muted">(0/1)</span></li>
+</ul><p class="muted" style="margin-top:10px">Δ ≈ 0 with this agent (it already knows it): <code>ns-root-css-classes</code>, <code>ns-android-window-insets</code>, <code>ns-binding-expressions</code>, <code>ns-color-formats</code>, <code>ns-http-gotchas</code>, <code>ns-multi-window</code>, <code>ns-observable-array-change-events</code>, <code>ns-observable-set-semantics</code>, <code>ns-page-navigation-lifecycle</code>, <code>ns-web-globals</code>, <code>ns-ios-corespotlight</code>, <code>ns-ios-scroll-under-bars</code>, <code>ns-trace-debugging</code>, <code>ns-unit-testing</code>, <code>ns-file-qualifiers</code>, <code>ns-snippets</code>, <code>ns-uncaught-error-policy</code>, <code>ns-css-keyframes</code>, <code>ns-css-selectors</code>, <code>ns-css-variables-calc</code>, <code>ns-input-accessory-dialogs</code>, <code>ns-root-layout-overlays</code>, <code>ns-top-nav</code>, <code>ns-touch-animations</code>, <code>ns-formatted-string-spans</code> — first candidates for sharper checks.</p></div>
+</div>
+<p class="note">Reproduce: <code>npm run eval:smoke</code> (and <code>npm run eval:baseline</code>), then <code>npm run eval:report</code>. Per-trial workspaces and transcripts are kept under <code>evals/results/workspaces/</code>.</p>
 
 <h2>Static review <span class="kicker">evals/lint-skills.mjs</span></h2>
-<p class="note">No skills under <code>skills/</code> yet.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>skill</th><th class="num">lines</th><th class="num">≈tokens</th><th>provenance</th><th>bundled files</th><th>lint notes</th></tr></thead>
+<tbody><tr class="cat"><td colspan="7">android/</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-android-edge-to-edge</td><td class="num">88</td><td class="num">1976</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-android-window-insets</td><td class="num">104</td><td class="num">1674</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr class="cat"><td colspan="7">core/</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-binding-expressions</td><td class="num">58</td><td class="num">1014</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-color-formats</td><td class="num">53</td><td class="num">927</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-http-gotchas</td><td class="num">40</td><td class="num">727</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-multi-window</td><td class="num">51</td><td class="num">965</td><td>verified <span class="muted">(1 untested)</span></td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-navigation-transitions</td><td class="num">52</td><td class="num">1037</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-observable-array-change-events</td><td class="num">60</td><td class="num">1088</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-observable-set-semantics</td><td class="num">64</td><td class="num">1128</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-page-navigation-lifecycle</td><td class="num">62</td><td class="num">1030</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-web-globals</td><td class="num">56</td><td class="num">745</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-xml-custom-components</td><td class="num">53</td><td class="num">835</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr class="cat"><td colspan="7">ios/</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-ios-corespotlight</td><td class="num">83</td><td class="num">1654</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-ios-safe-area-smudge</td><td class="num">71</td><td class="num">1518</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-ios-scroll-under-bars</td><td class="num">49</td><td class="num">1055</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-ios-widgets</td><td class="num">109</td><td class="num">2883</td><td>verified <span class="muted">(1 untested)</span></td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr class="cat"><td colspan="7">testing/</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-trace-debugging</td><td class="num">57</td><td class="num">852</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-unit-testing</td><td class="num">79</td><td class="num">1518</td><td>verified <span class="muted">(1 untested)</span></td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr class="cat"><td colspan="7">tooling/</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-file-qualifiers</td><td class="num">51</td><td class="num">831</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-snippets</td><td class="num">85</td><td class="num">1194</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-uncaught-error-policy</td><td class="num">44</td><td class="num">784</td><td>verified <span class="muted">(1 untested)</span></td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr class="cat"><td colspan="7">ui/</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-code-built-view-styling</td><td class="num">50</td><td class="num">816</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-css-keyframes</td><td class="num">44</td><td class="num">885</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-css-selectors</td><td class="num">41</td><td class="num">925</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-css-variables-calc</td><td class="num">53</td><td class="num">742</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-formatted-string-spans</td><td class="num">51</td><td class="num">771</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-gridlayout-spec-strings</td><td class="num">53</td><td class="num">842</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-input-accessory-dialogs</td><td class="num">79</td><td class="num">1579</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-keyboard-input</td><td class="num">103</td><td class="num">2313</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-line-height</td><td class="num">53</td><td class="num">1054</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-listview-recycling</td><td class="num">50</td><td class="num">798</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-root-css-classes</td><td class="num">44</td><td class="num">794</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-root-layout-overlays</td><td class="num">51</td><td class="num">928</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-tabview-lazy-loading</td><td class="num">48</td><td class="num">749</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-top-nav</td><td class="num">94</td><td class="num">1996</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-touch-animations</td><td class="num">78</td><td class="num">1092</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr><tr><td class="mono"><span class="dot ok"></span>ns-view-animations</td><td class="num">53</td><td class="num">986</td><td>verified</td><td><span class="muted">—</span></td><td class="muted">✓</td></tr></tbody></table></div>
 
 
 <footer>Generated by <code>evals/report-html.mjs</code> from <code>evals/results/</code> and <code>evals/lint-skills.mjs</code>.</footer>

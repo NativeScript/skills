@@ -1,0 +1,24 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" actionBarHidden="true">
+  <GridLayout rows="*">
+    <TabView androidTabsPosition="bottom" id="tabs">
+      <TabViewItem title="Today">
+        <GridLayout rows="auto, *">
+          <Label row="0" text="Today" class="h1 p-4" />
+          <ScrollView row="1">
+            <StackLayout>
+              <Label text="Feed item one" class="p-4" />
+              <Label text="Feed item two" class="p-4" />
+              <Label text="Feed item three" class="p-4" />
+            </StackLayout>
+          </ScrollView>
+        </GridLayout>
+      </TabViewItem>
+      <TabViewItem title="Library">
+        <GridLayout rows="auto, *">
+          <Label row="0" text="Library" class="h1 p-4" />
+          <Label row="1" text="Nothing saved yet" class="p-4" />
+        </GridLayout>
+      </TabViewItem>
+    </TabView>
+  </GridLayout>
+</Page>

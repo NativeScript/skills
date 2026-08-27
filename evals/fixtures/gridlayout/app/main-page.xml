@@ -1,0 +1,12 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" actionBarHidden="true">
+  <!-- BUG: the first two columns render as hairlines and the last spec crashes
+       on some builds; intended: icon column sized to content, two equal
+       flexible columns, and a fixed 48dp trailing column -->
+  <GridLayout rows="auto, *" columns="Auto, 1fr, 50%, 48">
+    <Label row="0" col="0" text="★" />
+    <Label row="0" col="1" text="Flexible A" />
+    <Label row="0" col="2" text="Flexible B" />
+    <Label row="0" col="3" text="48" />
+    <Label row="1" colSpan="4" text="content" />
+  </GridLayout>
+</Page>
